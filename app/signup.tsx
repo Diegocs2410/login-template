@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/Colors";
-import { loginSchema } from "@/constants/shemas";
+import { signupSchema } from "@/constants/shemas";
 import { RootParamsList } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavigationProp } from "@react-navigation/native";
@@ -9,9 +9,12 @@ import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
-export default function Index() {
-  const theme = useTheme();
+export default function Signup() {
   const navigation = useNavigation<NavigationProp<RootParamsList>>();
+  const theme = useTheme();
+  const handleSignup = () => {
+    navigation.navigate("home");
+  };
 
   const {
     control,
@@ -19,11 +22,14 @@ export default function Index() {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(signupSchema),
   });
+
   const onSubmit = (data) => {
     console.log(data);
     navigation.navigate("signup");
@@ -31,8 +37,8 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text variant="displayMedium">App Title</Text>
-      <Text variant="headlineSmall">Sign In</Text>
+      <Text variant="displayMedium">Create an account</Text>
+      <Text variant="bodyMedium">Name</Text>
       <Controller
         control={control}
         rules={{
@@ -40,18 +46,37 @@ export default function Index() {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            label="Email"
             mode="outlined"
+            dense
             onChangeText={onChange}
-            value={value}
             onBlur={onBlur}
+            value={value}
+          />
+        )}
+        name="name"
+        defaultValue=""
+      />
+      {errors.name && <Text>This is required.</Text>}
+      <Text variant="bodyMedium">Email</Text>
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            mode="outlined"
+            dense
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
           />
         )}
         name="email"
         defaultValue=""
       />
       {errors.email && <Text>This is required.</Text>}
-      <Text variant="headlineSmall">Password</Text>
+      <Text variant="bodyMedium">Password</Text>
       <Controller
         control={control}
         rules={{
@@ -59,9 +84,9 @@ export default function Index() {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            label="Password"
             mode="outlined"
             secureTextEntry={true}
+            dense
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
@@ -76,17 +101,13 @@ export default function Index() {
         onPress={handleSubmit(onSubmit)}
         style={styles.button}
       >
-        Login
+        Create Account
       </Button>
       <Text variant="bodyMedium">
-        Don't have an account?{" "}
-        <Link href="/signup" style={styles.signUp} asChild>
-          <Text
-            variant="bodyMedium"
-            style={{ color: theme.colors.primary }}
-            onPress={handleSubmit(onSubmit)}
-          >
-            Sign Up
+        Already have an account?{" "}
+        <Link href="/" style={styles.signUp} asChild>
+          <Text variant="bodyMedium" style={{ color: theme.colors.primary }}>
+            Sign In
           </Text>
         </Link>
       </Text>
